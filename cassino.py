@@ -1,5 +1,5 @@
 # cassino fornece: multiplicador/chance , cassino pede: Valor da aposta e numero (opcional)
-#jogos: roleta, caca niquel, Sorte-Pura!
+#jogos: roleta, caca niquel, Penalti!
 
 import random as rdm
 
