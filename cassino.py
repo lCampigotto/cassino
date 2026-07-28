@@ -3,109 +3,185 @@
 
 import random as rdm
 
-saldo = int(100000)
+saldo = 100000
+multiplica = 0.0
 
-def girar_roleta(numero, aposta):
+def penalti(aposta, canto):
+    global saldo, multiplica
+    goleiro = rdm.randint(1, 6)
+    try:
+        canto = int(canto)
+    except ValueError:
+        canto = 0
+
+    if goleiro == canto:
+        print("\nDEFESAÇA! O GOLEIRO PULA E DEFENDE O PÊNALTI!")
+        print("Você perdeu!")
+        multiplica = 0.0
+        print(f"Saldo atual: R$ {saldo:.2f}")
+        return False
+    else:
+        print("\nGOOOOOL! A BOLA VAI NO FUNDO DA REDE!")
+        print("Você Venceu!")
+        multiplica += 0.1
+        recompensa_penal = (aposta * multiplica) + aposta
+        saldo += recompensa_penal
+        print(f"Saldo atual: R$ {saldo:.2f}")
+        return True
+
+def playgame3():
+    global saldo, multiplica
+    print("\n----- BEM-VINDO AO PÊNALTI! -----")
+    print("~ Escolha um canto para chutar (1 a 6)!")
+    print("~ A cada chute certo seguido, a recompensa aumenta em +0.1x")
+    print("~ Aposta Mínima: R$ 500 | Máxima: R$ 1.000")
+    print(f"Saldo: R$ {saldo:.2f}\n")
+    
+    try:
+        aposta = int(input("Digite o Valor da aposta: "))
+    except ValueError:
+        print("Valor inválido!")
+        return
+
+    if aposta < 500 or aposta > 1000:
+        print("Valor de aposta fora do limite permitido (R$ 500 a R$ 1.000).")
+        return
+
+    if saldo < aposta:
+        print("Saldo Insuficiente.")
+        return
+
+    multiplica = 0.0
+    
+    while True:
+        print("\n ____________________\n |  1      2      3  |\n |  4      5      6  |\n")
+        canto = input("Escolha um canto para chutar: ")
+        confirma = input("Confirmar Chute? (s/n): ")
+        
+        if confirma.lower() == "s":
+            saldo -= aposta
+            acertou = penalti(aposta, canto)
+            
+            if not acertou:
+                break
+                
+            continuar = input("\nDeseja chutar novamente mantendo a sequência? (s/n): ")
+            if continuar.lower() != "s":
+                break
+        else:
+            print("Aposta cancelada.")
+            break
+
+def cacar_niquel():
+    global saldo
+    print("\n----- BEM-VINDO AO CAÇA-NÍQUEL! -----")
+    print("~ Números de 1 a 9")
+    print("~ Trinca = (Aposta x 2 x número da trinca)")
+    print("~ Custo por jogada: R$ 500")
+    
+    while True:
+        print(f"\nSaldo atual: R$ {saldo:.2f}")
+        if saldo < 500:
+            print("Você não possui saldo suficiente para jogar (Mínimo R$ 500).")
+            break
+
+        confirma = input("Puxar a Alavanca por R$ 500? (s/n): ")
+        if confirma.lower() == "s":
+            saldo -= 500
+            n1 = rdm.randint(1, 9)
+            n2 = rdm.randint(1, 9)
+            n3 = rdm.randint(1, 9)
+            
+            print(f"\nResultados: | {n1} | {n2} | {n3} |")
+            
+            if n1 == n2 == n3:
+                ganhos = 500 * 2 * n1
+                print(f"🎉 TRINCA! Você ganhou R$ {ganhos:.2f}!")
+                saldo += ganhos
+            else:
+                print("Sem trinca desta vez!")
+                
+            continuar = input("\nJogar novamente no Caça-Níquel? (s/n): ")
+            if continuar.lower() != "s":
+                break
+        else:
+            break
+
+def girar_roleta(opcao, aposta):
     global saldo
     resultado = rdm.randint(0, 62)
-    print("A roleta parou no número", resultado)
+    print(f"\nA roleta girou... E parou no número {resultado}!")
 
-    if numero.lower() in ["1", "pretas", "impares"] and resultado % 2 == 1:
-        ganhos = aposta * 2
-        print("Você ganhou R$", ganhos)
-        saldo += ganhos
-        print("Saldo : R$ ",saldo)
-        continuar = input("Continuar? (s/n) : ")
-        if continuar.lower() == "s":
-            playgame1()
-        else:
-            voltar1 = input("Deseja voltar ao menu? (s/n) : ")
-            if voltar1.lower() == "s":
-                menuplay()
-            else:
-                print("Programa encerrado : ")
-    elif numero.lower() in ["2", "brancas", "pares"] and resultado != 0 and resultado % 2 == 0:
-        ganhos = aposta * 2
-        print("Você ganhou R$", ganhos)
-        saldo += ganhos
-        print("Saldo : R$ ",saldo)
-        continuar = input("Continuar? (s/n) : ")
-        if continuar.lower() == "s":
-            playgame1()
-        else:
-            voltar2 = input("Deseja voltar ao menu? (s/n) : ")
-            if voltar2.lower() == "s":
-                menuplay()
-            else:
-                print("Programa encerrado : ")
-    elif numero.lower() in ["3", "verde", "zero"] and resultado == 0:
-        ganhos = aposta * 14
-        print("Você ganhou R$", ganhos)
-        saldo += ganhos
-        print("Saldo : R$ ",saldo)
-        continuar = input("Continuar? (s/n) : ")
-        if continuar.lower() == "s":
-            playgame1()
-        else:
-            voltar3 = input("Deseja voltar ao menu? (s/n) : ")
-            if voltar3.lower() == "s":
-                menuplay()
-            else:
-                print("Programa encerrado : ")
-    else:
-        print("Você perdeu R$", aposta)
-        print("Saldo : R$ ",saldo)
-        continuar = input("Continuar? (s/n) : ")
-    if continuar.lower() == "s":
-        playgame1()
-    else:
-        voltar = input("Deseja voltar ao menu? (s/n) : ")
-        if voltar.lower() == "s":
-            menuplay()
-        else:
-            print("Programa encerrado : ")
+    venceu = False
+    
+    if opcao in ["1", "pretas", "impares"] and resultado % 2 != 0:
+        venceu = True
+        multiplicador = 2
+    elif opcao in ["2", "brancas", "pares"] and resultado != 0 and resultado % 2 == 0:
+        venceu = True
+        multiplicador = 2
+    elif opcao in ["3", "verde", "zero"] and resultado == 0:
+        venceu = True
+        multiplicador = 14
 
+    if venceu:
+        ganhos = aposta * multiplicador
+        print(f"🎉 PARABÉNS! Você ganhou R$ {ganhos:.2f}!")
+        saldo += ganhos
+    else:
+        print(f"Que pena, você perdeu R$ {aposta:.2f}.")
 
 def playgame1():
     global saldo
-    print("\n----- BEM VINDO A ROLETA! -----\n\n1> Pretas = Impares (2x)\n2> Brancas = Pares (2x)\n3> Verde = Zero (14x)\n")
-    print("Saldo : R$", saldo)
-    print("")
-    numero = input("Escolha uma cor para apostar : ")
-    aposta = int(input("Escolha um valor para apostar : "))
-    print("")
-    confirma = input("Confirmar aposta? (s/n) : ")
+    print("\n----- BEM-VINDO À ROLETA! -----")
+    print("1> Pretas = Ímpares (2x)")
+    print("2> Brancas = Pares (2x)")
+    print("3> Verde = Zero (14x)")
+    
+    while True:
+        print(f"\nSaldo: R$ {saldo:.2f}")
+        try:
+            aposta = int(input("Escolha o valor da aposta: "))
+        except ValueError:
+            print("Valor inválido!")
+            continue
 
-    if saldo >= aposta:
+        if aposta > saldo:
+            print("Saldo insuficiente para essa aposta!")
+            continue
+            
+        numero = input("Escolha a opção (1, 2 ou 3): ").lower()
+        confirma = input("Confirmar aposta? (s/n): ")
+
         if confirma.lower() == "s":
             saldo -= aposta
             girar_roleta(numero, aposta)
+            
+            continuar = input("\nDeseja fazer outra aposta na Roleta? (s/n): ")
+            if continuar.lower() != "s":
+                break
         else:
-            print("Aposta cancelada. Reinicie o Sistema")
-    else:
-        print("Voce não possui saldo suficiente. Tente novamente")
-        playgame1()
-
-def init_game(par):
-    if par == 1:
-        playgame1()
-    elif par == 2:
-        playgame2()
-    elif par == 3:
-        playgame3()
+            print("Aposta cancelada.")
+            break
 
 def menuplay():
-
-
-    print("---------- BEM VINDO AO CASSINO ----------")
-    print(" ----- Escolha um de nossos jogos: -----   \n")
-    print("1> Roleta\n2> Caça-Níquel\n3> Sorte-Pura!\n")
-
-    global escolha
-    global jogos
-    escolha = int(input("Digite o número do jogo desejado : "))
-    jogos = [1, 2, 3]
-    if escolha in jogos:
-        init_game(escolha)
+    while True:
+        print("\n========== BEM VINDO AO CASSINO ==========")
+        print(f"Seu Saldo Atual: R$ {saldo:.2f}")
+        print("1> Roleta\n2> Caça-Níquel\n3> Pênalti\n4> Sair")
+        
+        escolha = input("Digite o número do jogo desejado: ")
+        
+        if escolha == "1":
+            playgame1()
+        elif escolha == "2":
+            cacar_niquel()
+        elif escolha == "3":
+            playgame3()
+        elif escolha == "4":
+            print("\nObrigado por jogar no Cassino! Até mais.")
+            break
+        else:
+            print("Opção inválida! Tente novamente.")
 
 menuplay()
